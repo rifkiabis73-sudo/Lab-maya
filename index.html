@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab Maya Koding dan Kecerdasan Artifisial</title>
+<style>
+:root{--ink:#102a43;--bg:#f3f6fa;--card:#fff;--pri:#1252c4;--ok:#116b36;--okbg:#e3f5ea;--bad:#a61b1b;--badbg:#fdeaea;--line:#b8c4d3;--warn:#7a4b00;--warnbg:#fff3d6}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0b1b2e;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--ink)}
+#st{position:absolute;width:960px;height:540px;transform-origin:0 0;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+header{height:52px;background:var(--ink);color:#fff;display:flex;align-items:center;padding:0 16px;gap:10px;flex:none}
+header b{font-size:16px;margin-right:auto}
+.pill{min-width:44px;height:36px;border-radius:18px;border:2px solid #fff;background:transparent;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+.pill.on{background:#fff;color:var(--ink)}.pill.dn{background:#2e9e5b;border-color:#2e9e5b}
+main{flex:1;padding:14px 22px;overflow:hidden;display:flex;gap:18px}
+footer{height:58px;flex:none;background:#e3e9f1;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-top:1px solid var(--line)}
+button.b{height:42px;min-width:120px;padding:0 18px;font-size:16px;font-weight:700;border-radius:8px;border:2px solid var(--pri);background:var(--pri);color:#fff;cursor:pointer}
+button.b.s{background:#fff;color:var(--pri)}button.b:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+h1{font-size:34px;margin:0 0 6px}h2{font-size:22px;margin:0}p{margin:0;font-size:16px;line-height:1.45}
+.sm{font-size:14px;color:#334e68}
+#fb{min-height:62px;border-radius:8px;padding:10px 12px;font-size:16px;line-height:1.4;border:2px solid var(--line);background:#fff}
+#fb.ok{background:var(--okbg);border-color:var(--ok);color:#0b4a24}#fb.no{background:var(--badbg);border-color:var(--bad);color:#7d1212}#fb.in{background:var(--warnbg);border-color:var(--warn);color:var(--warn)}
+.opt{display:block;width:100%;text-align:left;margin-bottom:8px;padding:10px 12px;font-size:16px;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt.used{background:var(--okbg);border-color:var(--ok);cursor:default}
+input[type=range]{width:100%;height:30px;accent-color:var(--pri)}
+.row{display:flex;align-items:center;gap:10px}.row label{font-size:16px;font-weight:600;min-width:150px}
+.bar{height:22px;background:#dde5ef;border-radius:11px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+.code{font-family:Consolas,monospace;background:#102a43;color:#fff;border-radius:8px;padding:10px 12px;font-size:15px;line-height:1.5}
+.box{display:inline-flex;width:56px;height:44px;align-items:center;justify-content:center;border:2px solid var(--line);border-radius:6px;font-size:22px;margin:3px;background:#fff}.box.p{background:var(--okbg);border-color:var(--ok)}
+.fan{font-size:64px;display:inline-block}.fan.on{animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.fan.on{animation:none}}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border:1px solid var(--line);padding:5px 8px;text-align:left}
+</style>
+</head>
+<body>
+<div id="st"></div>
+<script>
+const st=document.getElementById('st');
+const NAMES=['Urutan Algoritma','Percabangan','Perulangan','Data Latih AI','Uji Model AI'];
+const P={page:'home',done:[0,0,0,0,0],tries:[0,0,0,0,0],pts:[0,0,0,0,0],S:{}};
+const ORDER=['home','guide',1,2,3,4,5,'end'];
+function fit(){const s=Math.min(innerWidth/960,innerHeight/540);st.style.transform='scale('+s+')';st.style.left=(innerWidth-960*s)/2+'px';st.style.top=(innerHeight-540*s)/2+'px'}
+addEventListener('resize',fit);
+function go(p){P.page=p;P.S={};if(p===1)P.S={o:[]};if(p===2)P.S={t:60,tmp:50,res:null};if(p===3)P.S={n:6+Math.floor(Math.random()*7),N:1,ran:false};if(p===4)P.S={n:20,p:80,acc:null};if(p===5)P.S={th:.3,q:null};R()}
+function nav(d){const i=ORDER.indexOf(P.page)+d;if(i>=0&&i<ORDER.length)go(ORDER[i])}
+function fb(t,c){const e=document.getElementById('fb');if(e){e.className=c;e.innerHTML=t}}
+function award(l){if(!P.done[l-1]){P.done[l-1]=1;P.pts[l-1]=Math.max(10,20-5*P.tries[l-1])}}
+function total(){return P.pts.reduce((a,b)=>a+b,0)}
+function R(){
+ const p=P.page,lv=typeof p==='number';
+ let pills='';for(let i=1;i<=5;i++)pills+=`<button class="pill ${p===i?'on':''} ${P.done[i-1]&&p!==i?'dn':''}" onclick="go(${i})" aria-label="Level ${i}">${i}</button>`;
+ let body='';
+ if(p==='home')body=home();else if(p==='guide')body=guide();else if(lv)body=lvl(p);else body=end();
+ const i=ORDER.indexOf(p);
+ st.innerHTML=`<header><b>Lab Maya KKA</b>${lv||p==='guide'?pills:''}<button class="pill" style="min-width:90px" onclick="go('guide')">Panduan</button></header>
+ <main>${body}</main>
+ <footer><button class="b s" onclick="nav(-1)" ${i===0?'disabled':''}>Kembali</button><span class="sm">${lv?`<b>Level ${p} dari 5</b> · Skor ${total()}/100`:''}</span><button class="b" onclick="nav(1)" ${i===ORDER.length-1?'disabled':''}>${p==='home'?'Mulai':(p===5?'Lihat hasil':'Berikutnya')}</button></footer>`;
+ if(lv)bind(p);
+}
+function home(){return `<div class="col" style="flex:1;justify-content:center"><h1>Lab Maya Koding dan Kecerdasan Artifisial</h1>
+<p style="font-size:20px">Kamu jadi teknisi di lini produksi botol minuman. Program dan AI apa yang bikin mesin sortir bekerja tanpa salah?</p>
+<p class="sm">5 level simulasi: algoritma, percabangan, perulangan, data latih AI, dan uji model AI. Kamu bebas membuka level mana saja lewat tombol angka di atas.</p></div>
+<div class="card col" style="width:300px;justify-content:center;text-align:center"><div style="font-size:84px" aria-hidden="true">🏭🤖</div><p><b>Konteks vokasi:</b> Teknologi Informasi dan Teknologi Manufaktur (otomasi dan kendali mutu).</p></div>`}
+function guide(){return `<div class="col" style="flex:1"><h2>Panduan</h2>
+<div class="card"><p><b>Tujuan belajar:</b> kamu dapat menyusun alur program, memakai percabangan dan perulangan, serta menjelaskan pengaruh data latih dan ambang batas pada hasil AI.</p></div>
+<div class="card"><p><b>Cara bermain</b></p><p>1. Pilih level dari tombol angka di atas.<br>2. Atur variabel (geser slider, atur angka, atau pilih langkah).<br>3. Tekan tombol uji dan baca umpan balik di kotak bawah misi.<br>4. Boleh mengulang. Percobaan salah mengurangi skor level (maksimal 20, minimal 10).</p></div>
+<div class="card"><p><b>Skor:</b> 5 level × 20 poin = 100. Level hijau berarti sudah selesai, tapi tetap bisa dibuka lagi.</p></div></div>`}
+function lvl(l){
+ const m={1:['Level 1: Urutkan alur program','Mesin sortir harus memisahkan botol cacat. Klik langkah dalam urutan yang benar, dari yang pertama.'],
+ 2:['Level 2: Percabangan (JIKA-MAKA)','Kipas pendingin motor harus NYALA saat suhu 70°C atau lebih, dan MATI saat 55°C atau kurang. Atur batas suhu yang tepat.'],
+ 3:['Level 3: Perulangan','Robot lengan harus memasukkan semua kotak ke palet. Atur jumlah ulangan agar pas, tidak kurang dan tidak lebih.'],
+ 4:['Level 4: Data latih AI','AI pendeteksi buah matang di pabrik pengolahan perlu akurasi minimal 85%. Atur jumlah dan komposisi data latih.'],
+ 5:['Level 5: Uji model AI','AI memberi skor kemungkinan cacat pada 8 produk. Atur ambang batas: tidak boleh ada produk cacat yang lolos, dan total salah maksimal 1.']}[l];
+ return `<div class="col" style="width:400px"><h2>${m[0]}</h2><div class="card"><p>${m[1]}</p></div><div id="fb" class="in">Atur variabel lalu jalankan uji.</div><div id="ctl" class="col"></div></div>
+ <div class="card col" id="sim" style="flex:1;justify-content:center"></div>`}
+function bind(l){({1:l1,2:l2,3:l3,4:l4,5:l5})[l]()}
+function setCtl(h){document.getElementById('ctl').innerHTML=h}
+function setSim(h){document.getElementById('sim').innerHTML=h}
+/* L1 */
+const STEP=['Tentukan masalah: pisahkan botol cacat','Input: ambil gambar dari kamera','Proses: bandingkan dengan aturan atau model','Output: gerakkan lengan ke jalur buang','Uji dan perbaiki program'];
+const PERM=[3,0,4,2,1];
+function l1(){const o=P.S.o;
+ setCtl(`<button class="b s" onclick="P.S.o=[];l1();fb('Urutan diulang dari awal.','in')">Ulangi urutan</button>`);
+ setSim(`<p><b>Pilih langkah berikutnya:</b></p>`+PERM.map(i=>`<button class="opt ${o.includes(i)?'used':''}" ${o.includes(i)?'disabled':''} onclick="pick1(${i})">${o.includes(i)?(o.indexOf(i)+1)+'. ':''}${STEP[i]}</button>`).join(''))}
+function pick1(i){const o=P.S.o;
+ if(i===o.length){o.push(i);l1();if(o.length===5){award(1);R();fb('Benar! Alur lengkap: masalah, input, proses, output, uji. Itu urutan dasar berpikir komputasional. +'+P.pts[0]+' poin.','ok')}else fb('Tepat. Langkah '+o.length+' sudah benar.','ok')}
+ else{P.tries[0]++;fb('Belum tepat. Pikirkan: apa yang harus dilakukan sebelum langkah itu? Mulai dari <b>"'+STEP[o.length].split(':')[0]+'"</b>.','no')}}
+/* L2 */
+function l2(){const S=P.S,on=S.tmp>S.t;
+ setCtl(`<div class="row"><label>Batas suhu (T)</label><input type="range" min="30" max="100" value="${S.t}" oninput="P.S.t=+this.value;upd2()"><b id="tv">${S.t}°C</b></div>
+ <div class="row"><label>Suhu motor</label><input type="range" min="30" max="100" value="${S.tmp}" oninput="P.S.tmp=+this.value;upd2()"><b id="mv">${S.tmp}°C</b></div>
+ <button class="b" onclick="chk2()">Periksa 3 skenario</button>`);upd2()}
+function upd2(){const S=P.S,on=S.tmp>S.t;document.getElementById('tv').textContent=S.t+'°C';document.getElementById('mv').textContent=S.tmp+'°C';
+ setSim(`<div class="code">JIKA suhu (${S.tmp}) &gt; ${S.t}<br>&nbsp;&nbsp;MAKA kipas = NYALA<br>SELAIN ITU kipas = MATI</div>
+ <div style="text-align:center"><span class="fan ${on?'on':''}" aria-hidden="true">🌀</span><p style="font-size:20px"><b>Kipas: ${on?'NYALA':'MATI'}</b></p></div>
+ <div class="bar"><i style="width:${(S.tmp-30)/70*100}%;background:${on?'#b3261e':'#1252c4'}"></i></div><p class="sm">Bar suhu motor (30–100°C)</p>`)}
+function chk2(){const t=P.S.t,sc=[[55,0],[70,1],[85,1]];let ok=1,h='';
+ sc.forEach(([s,e])=>{const g=s>t?1:0;if(g!==e)ok=0;h+=`${s}°C: kipas ${g?'NYALA':'MATI'} (seharusnya ${e?'NYALA':'MATI'}) ${g===e?'✔':'✘'}<br>`});
+ if(ok){award(2);R();fb(h+'Benar! Batas '+t+'°C memisahkan kondisi aman dan panas. +'+P.pts[1]+' poin.','ok')}
+ else{P.tries[1]++;fb(h+(t<55?'Batas terlalu rendah: kipas menyala saat motor masih aman.':'Batas terlalu tinggi: motor sudah panas tapi kipas belum menyala.'),'no')}}
+/* L3 */
+function l3(){const S=P.S;
+ setCtl(`<div class="row"><label>Ulangi N kali</label><button class="b s" style="min-width:48px" onclick="P.S.N=Math.max(1,P.S.N-1);l3()" aria-label="Kurangi">−</button><b style="font-size:24px;min-width:36px;text-align:center">${S.N}</b><button class="b s" style="min-width:48px" onclick="P.S.N=Math.min(20,P.S.N+1);l3()" aria-label="Tambah">+</button></div>
+ <button class="b" onclick="run3()">Jalankan robot</button><button class="b s" onclick="go(3)">Acak kotak baru</button>`);
+ let b='';const k=S.ran?Math.min(S.N,S.n):0;for(let i=0;i<S.n;i++)b+=`<span class="box ${i<k?'p':''}">${i<k?'✅':'📦'}</span>`;
+ setSim(`<div class="code">ulangi ${S.N} kali:<br>&nbsp;&nbsp;ambil kotak dari ban berjalan<br>&nbsp;&nbsp;taruh di palet</div><p><b>Ban berjalan: ${S.n} kotak</b> · Di palet: ${k}</p><div>${b}</div>`)}
+function run3(){const S=P.S;S.ran=true;l3();
+ if(S.N===S.n){award(3);R();P.S.ran=true;l3();fb('Pas! Perulangan berhenti tepat saat kotak habis. +'+P.pts[2]+' poin.','ok')}
+ else{P.tries[2]++;fb(S.N<S.n?'Kurang: masih ada '+(S.n-S.N)+' kotak di ban berjalan. Naikkan N.':'Galat: robot mengambil kotak yang tidak ada ('+(S.N-S.n)+' kali lebih). Turunkan N.','no')}}
+/* L4 */
+function calc4(){const S=P.S,a=Math.max(40,Math.min(98,55+40*(1-Math.exp(-S.n/50))-Math.abs(S.p-50)*.4)),d=(S.p-50)*.3;return[a,Math.min(99,a+d),Math.min(99,a-d)]}
+function l4(){const S=P.S;
+ setCtl(`<div class="row"><label>Jumlah data</label><input type="range" min="10" max="200" step="10" value="${S.n}" oninput="P.S.n=+this.value;document.getElementById('nv').textContent=this.value"><b id="nv">${S.n}</b></div>
+ <div class="row"><label>% buah matang</label><input type="range" min="10" max="90" step="5" value="${S.p}" oninput="P.S.p=+this.value;document.getElementById('pv').textContent=this.value+'%'"><b id="pv">${S.p}%</b></div>
+ <button class="b" onclick="train4()">Latih model</button>`);
+ const r=S.acc;
+ setSim(r?`<h2>Hasil pelatihan</h2><p>Akurasi total: <b>${r[0].toFixed(0)}%</b></p><div class="bar"><i style="width:${r[0]}%"></i></div><p>Mengenali buah matang: <b>${r[1].toFixed(0)}%</b></p><div class="bar"><i style="width:${r[1]}%"></i></div><p>Mengenali buah mentah: <b>${r[2].toFixed(0)}%</b></p><div class="bar"><i style="width:${r[2]}%"></i></div>`:`<div style="font-size:64px;text-align:center" aria-hidden="true">🍎🍏</div><p style="text-align:center">Atur data latih, lalu tekan <b>Latih model</b>.</p>`)}
+function train4(){const r=calc4();P.S.acc=r;l4();
+ if(r[0]>=85){award(4);R();P.S.acc=r;l4();fb('Berhasil, akurasi '+r[0].toFixed(0)+'%. Data cukup banyak dan seimbang. +'+P.pts[3]+' poin.','ok')}
+ else{P.tries[3]++;fb(P.S.n<80?'Data masih sedikit, AI belum cukup belajar. Tambah jumlah data.':'Komposisi data timpang, AI condong menebak kelas yang lebih banyak. Seimbangkan % buah matang mendekati 50%.','no')}}
+/* L5 */
+const IT=[['🍾 A',.92,1],['🍾 B',.81,1],['🍾 C',.68,1],['🍾 D',.52,1],['🍾 E',.58,0],['🍾 F',.4,0],['🍾 G',.25,0],['🍾 H',.1,0]];
+function l5(){const S=P.S;let miss=0,fa=0,rows='';
+ IT.forEach(([n,c,t])=>{const f=c>=S.th?1:0;if(t&&!f)miss++;if(!t&&f)fa++;rows+=`<tr><td>${n}</td><td>${(c*100).toFixed(0)}%</td><td>${t?'Cacat':'Baik'}</td><td>${f?'Dibuang':'Lolos'}</td></tr>`});
+ S.miss=miss;S.fa=fa;
+ setCtl(`<div class="row"><label>Ambang batas</label><input type="range" min="5" max="95" value="${Math.round(S.th*100)}" oninput="P.S.th=this.value/100;l5()"><b>${Math.round(S.th*100)}%</b></div><button class="b" onclick="chk5()">Periksa hasil</button>
+ <div class="card"><p class="sm"><b>Refleksi:</b> Pabrik obat memakai ambang rendah. Mengapa?</p><button class="opt" onclick="q5(1)">Supaya semua produk cacat pasti terbuang</button><button class="opt" onclick="q5(0)">Supaya lebih banyak produk baik lolos</button></div>`);
+ setSim(`<table><tr><th>Produk</th><th>Skor AI</th><th>Kondisi asli</th><th>Keputusan</th></tr>${rows}</table><p><b>Cacat lolos: ${miss}</b> · <b>Produk baik terbuang: ${fa}</b></p>`)}
+function chk5(){const S=P.S;if(S.miss===0&&S.miss+S.fa<=1){award(5);R();fb('Tepat! Tidak ada cacat lolos dan hanya '+S.fa+' salah buang. Ambang kecil menekan risiko lolos. +'+P.pts[4]+' poin.','ok')}
+ else{P.tries[4]++;fb(S.miss?'Ada '+S.miss+' produk cacat lolos. Turunkan ambang batas.':'Terlalu banyak produk baik terbuang ('+S.fa+'). Naikkan ambang sedikit, tapi jangan sampai cacat lolos.','no')}}
+function q5(v){fb(v?'Benar. Untuk produk berisiko tinggi, lebih aman salah buang daripada cacat lolos ke konsumen.':'Kurang tepat. Ambang rendah justru menangkap lebih banyak produk yang diragukan, sehingga lebih aman.',v?'ok':'no')}
+function end(){const t=total(),m=t>=80?'Sangat baik! Kamu paham dasar program dan AI di lini produksi.':t>=50?'Bagus. Buka lagi level yang belum hijau untuk menambah skor.':'Ayo coba lagi level yang belum selesai lewat tombol angka.';
+ return `<div class="col" style="flex:1"><h2>Hasil akhirmu</h2><div class="card"><p style="font-size:34px"><b>${t}</b> / 100</p><p>${m}</p></div>
+ <table><tr><th>Level</th><th>Status</th><th>Poin</th></tr>${NAMES.map((n,i)=>`<tr><td>${i+1}. ${n}</td><td>${P.done[i]?'Selesai':'Belum'}</td><td>${P.pts[i]}</td></tr>`).join('')}</table>
+ <button class="b s" style="width:200px" onclick="P.done=[0,0,0,0,0];P.tries=[0,0,0,0,0];P.pts=[0,0,0,0,0];go(1)">Main dari awal</button></div>
+ <div class="card col" style="width:290px"><h2>Informasi Kreator</h2><p>Kreator: [isi nama kreator, boleh dengan gelar]</p><p class="sm">Ilustrasi memakai emoji dan kode CSS. Materi dibuat dengan bantuan AI (Claude) dan telah ditinjau kreator.</p></div>`}
+fit();R();
+</script>
+</body>
+</html>
